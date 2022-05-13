@@ -1,30 +1,49 @@
+
 ----------------------------------------------------
-Deployment Guide:
+Deployment Guide: Ubuntu 20.04.4
 ----------------------------------------------------
 
 
-https://protect-za.mimecast.com/s/9kIGCAnXYRIw62mtGNo3E?domain=releases.ubuntu.com
+https://releases.ubuntu.com/20.04.4/?_ga=2.126533133.1693286580.1651167948-1268987514.1651167948
+
 sudo apt-get update
+
+sudo apt upgrade
 
 
 -----------------------------------------
 Node.js installation
 -----------------------------------------
 
-https://protect-za.mimecast.com/s/4DnZCGZXV1cDYGyhkv1PT?domain=github.com
-curl -fsSL https://protect-za.mimecast.com/s/y0CRCJZK94c6r54sOgM0R?domain=deb.nodesource.com | sudo -E bash -
+https://github.com/nodesource/distributions/blob/master/README.md
+
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+
 sudo apt-get install -y nodejs
+
+
+------------------------------------------
+Download Frontend repo
+------------------------------------------
+
+git init
+
+git remote add origin your-git-url
+
+git fetch
+
+git reset --mixed origin/master
 
 
 -------------------------------------------------
 MongoDB installation
 -------------------------------------------------
 
-https://protect-za.mimecast.com/s/P_XJCBgXYVfw6BZt6vi6y?domain=mongodb.com
+https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/
 
-wget -qO - https://protect-za.mimecast.com/s/LIIECDRZVXuEv06HAB1T0?domain=mongodb.org | sudo apt-key add -
+wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
 
-echo "deb [ arch=amd64,arm64 ] https://protect-za.mimecast.com/s/2GOECElXVYsv9MAHPNEow?domain=repo.mongodb.org focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
 
 sudo apt-get install -y mongodb-org
 
@@ -33,12 +52,18 @@ Once installation completes.
 Test to make sure frontend can do query.
 
 mongoDB service commands
+
 sudo systemctl enable mongod
+
 sudo systemctl stop mongod
+
 sudo systemctl restart mongod
+
 sudo systemctl status mongod
 
+
 mkdir CRDB
+
 git clone
 
 
@@ -52,7 +77,7 @@ timedatectl set-timezone Africa/Johannesburg
 
 crontab -e
 
-27 21 * * * cd CRDB/ITEC_CRDB_Python_Script && python3 routine_start.py
+00 05 * * * cd CRDB/ITEC_CRDB_Python_Script && python3 routine_start.py
 
 
 ------------------------------------------------
@@ -66,22 +91,31 @@ pm2 startup
 
 copy and paste ink provided to enable startup on boot.
 
+
 pm2 commands:
 
 pm2 status
+
 pm2 start
+
 pm2 restart
+
 pm2 stop.
 
 
 -----------------------------------------------------
 ufw firewall setup
 -----------------------------------------------------
+## input firewall rules.
 
-sudo ufw allow from https://protect-za.mimecast.com/s/-5qUCKO7VgTXEmAcog2LF?domain=172.*.*.0 to any port 22 proto tcp
-sudo ufw allow from https://protect-za.mimecast.com/s/nz40CLg1VjfGj4otK0RTs?domain=192.168.0.0 to any port 22 proto tcp
+sudo ufw allow from 172.0.0.0/24 to any port 22 proto tcp
+
+sudo ufw allow from 192.168.0.0/24 to any port 22 proto tcp
+
 sudo ufw allow http
+
 sudo ufw allow https
+
 sudo ufw enable
 
 
