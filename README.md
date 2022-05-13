@@ -89,6 +89,7 @@ sudo apt-get install pymongo
 
 
 python3 main.py
+
 setup ftp server details.
 
 
@@ -101,7 +102,9 @@ date --set="2 OCT 2006 18:00:00"
 timedatectl set-timezone Africa/Johannesburg
 
 crontab -e
+
 add the following text to schedule routing script to run at 5am everyday.
+
 00 05 * * * cd apps/crdb-backend && python3 routine_start.py
 
 
@@ -119,20 +122,31 @@ copy and paste ink provided to enable startup on boot.
 pm2 commands:
 
 pm2 status
+
 pm2 start
+
 pm2 restart
+
 pm2 stop.
+
 pm2 unstartup systemd
+
 
 
 -----------------------------------------------------
 ufw firewall setup
 -----------------------------------------------------
+
 ## input firewall rules.
+
 sudo ufw allow from 172.0.0.0/24 to any port 22 proto tcp
+
 sudo ufw allow from 192.168.0.0/24 to any port 22 proto tcp
+
 sudo ufw allow http
+
 sudo ufw allow https
+
 sudo ufw enable
 
 
@@ -163,7 +177,9 @@ location / {
     }
    
 check configuration
+
 sudo nginx -t
 
 sudo service nginx restart
+
 sudo nginx status
