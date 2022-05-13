@@ -41,9 +41,10 @@ p{
     min-width: 500px;
 }
 .footer{
+    font-family: "Roboto Slab", serif;
     position: fixed;
     bottom:0;
-    padding: 20px;
+    padding: 20px 0;
     background-color: #dddddd;
 }
 @media screen and (min-width: 1100px) {
