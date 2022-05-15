@@ -183,3 +183,19 @@ sudo nginx -t
 sudo service nginx restart
 
 sudo nginx status
+
+
+-----------------------------------------
+update process
+------------------------------------------
+
+pm2 stop app.js
+
+git stash
+
+git fetch url [branch]
+
+git pull url [branch] 
+
+pm2 start app.js
+
