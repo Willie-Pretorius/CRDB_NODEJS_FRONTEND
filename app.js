@@ -62,9 +62,28 @@ app.get("/query", (req, res) => {
   datalist = [{ number: "Checked number", id: "Provider ID" }];
 });
 
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, 'g'), replace);
+}
+
+function format_input(input){
+  a = replaceAll(input," ", "")
+  list = a.split(",")
+  let numbers = []
+  list.forEach(number=>{
+    c = number.replace(/[^0-9 ]/g, "")
+    if (c[0] == 0){
+      c = "27"+c.substring(1)
+    }
+    numbers.push(c)
+  })
+  console.log(numbers)
+  return numbers
+}
+
 app.post("/query", async (req, res) => {
   input = req.body.number;
-  numbers = input.split(",");
+  numbers = format_input(input)
   if (numbers.length > 100) {
     datalist = [{ number: "The maximum lookups are 100 at a time.", id: "" }];
     res.redirect("/query");
