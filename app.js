@@ -14,22 +14,26 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
 let datalist = [{ number: "Checked number", id: "Provider ID" }];
+let RoutingLabels = []
 let NumberingPlan = []
 let carrier = ""
+
+async function load_numbering_plan () {
+  NumberingPlan = await csv().fromFile("data/NumberingPlan.csv")
+}
+async function load_routing_labels() {
+  RoutingLabels = await csv().fromFile("data/RoutingLabels.csv")
+}
+const loadfile1 = load_routing_labels()
+const loadfile2 = load_numbering_plan()
 
 mongoose.connect("mongodb://127.0.0.1:27017/numbers_db");
 const numberSchema = new mongoose.Schema({
   id: String,
   number: String,
 });
-const Numbers = mongoose.model("numbers_col", numberSchema, "numbers_col");
 
-async function load_numbering_plan () {
-  NumberingPlan = await csv().fromFile("data/NumberingPlan.csv")
-  
-}
-// load_numbering_plan().then(()=>console.log(NumberingPlan))
-const loadcsv = load_numbering_plan()
+const Numbers = mongoose.model("numbers_col", numberSchema, "numbers_col");
 
 async function number_plan_checker(str){
   formatted = replaceAll(str,"27","0")
@@ -47,6 +51,23 @@ async function number_plan_checker(str){
     
   })
 }
+async function routing_label_checker(str){
+  return new Promise((resolve)=>{
+    console.log(str)
+    RoutingLabels.forEach((prefix)=>{
+      RNORoute = prefix.RoutingLabel;
+      // console.log(RNORoute)
+      if (RNORoute == str){
+        result = prefix.PARTICIPANT_ID
+        console.log(result)
+        carrier = result;
+        resolve();
+      }
+    })
+    
+  })
+}
+
 
 function retrieve_data(info) {
   return new Promise((resolve) => {
@@ -63,6 +84,8 @@ function retrieve_data(info) {
           });
           resolve();
         } else {
+          console.log(file.RNORoute)
+          routing_label_checker(file.RNORoute)
           datalist.push({
             number: info.number,
             id: file.id,
