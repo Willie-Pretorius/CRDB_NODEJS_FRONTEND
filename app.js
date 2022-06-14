@@ -15,6 +15,7 @@ app.use(express.static(__dirname + "/public"));
 
 let datalist = [{ number: "Checked number", id: "Provider ID" }];
 let NumberingPlan = []
+let carrier = ""
 
 mongoose.connect("mongodb://127.0.0.1:27017/numbers_db");
 const numberSchema = new mongoose.Schema({
@@ -34,17 +35,12 @@ async function number_plan_checker(str){
   formatted = replaceAll(str,"27","0")
   return new Promise((resolve)=>{
     number= Number(formatted)
-    console.log(typeof(number))
-    console.log(number)
     NumberingPlan.forEach((prefix)=>{
-      console.log(prefix)
-      ifrom = prefix['Number from'];
-      ito = prefix['Number  to'];
-      console.log(ifrom)
-      console.log(ito)
+      ifrom = Number(prefix.NumberFrom);
+      ito = Number(prefix.NumberTo);
       if (number >= ifrom && number <= ito ){
         result = prefix['PARTICIPANT_ID']
-        console.log(result)
+        carrier = result;
         resolve();
       }
     })
@@ -59,10 +55,11 @@ function retrieve_data(info) {
         // console.log("err");
       } else {
         if (file == null) {
-          let carrier =  number_plan_checker(info.number);
+          number_plan_checker(info.number);
+          console.log()
           datalist.push({
             number: info.number,
-            id: "Not Found",
+            id: carrier,
           });
           resolve();
         } else {
@@ -79,7 +76,10 @@ function retrieve_data(info) {
 
 async function post_handler(list) {
   for (item of list) {
-    await retrieve_data({ number: item });
+    if (item != "Invalid"){
+      await retrieve_data({ number: item });
+    } else datalist.push({number:"invalid",id: "invalid"})
+    
   }
 }
 
@@ -109,7 +109,11 @@ function format_input(input){
     if (c[0] == 0){
       c = "27"+c.substring(1)
     }
-    numbers.push(c)
+    if (c.length > 11 || c.length <11){
+      numbers.push("Invalid" )
+    } else {
+      numbers.push(c)
+    }
   })
   // console.log(numbers)
   return numbers
