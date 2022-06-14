@@ -6,6 +6,12 @@ textarea{
     margin-top: 10px;
     margin-bottom: 10px;
 }
+tr,th{
+border-width: 2px;
+border-style: solid;
+border-color: black;
+padding: 5px;
+}
 p{
     margin: 0;
 }

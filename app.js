@@ -13,7 +13,7 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
-let datalist = [{ number: "Checked number", id: "Provider ID" }];
+let datalist = [{ Number: "Number", id: "ID",Action: "Action", carrier:"Carrier" }];
 let RoutingLabels = []
 let NumberingPlan = []
 let carrier = ""
@@ -53,13 +53,11 @@ async function number_plan_checker(str){
 }
 async function routing_label_checker(str){
   return new Promise((resolve)=>{
-    console.log(str)
     RoutingLabels.forEach((prefix)=>{
       RNORoute = prefix.RoutingLabel;
       // console.log(RNORoute)
       if (RNORoute == str){
-        result = prefix.PARTICIPANT_ID
-        console.log(result)
+        result = prefix.ParticipantID
         carrier = result;
         resolve();
       }
@@ -77,19 +75,24 @@ function retrieve_data(info) {
       } else {
         if (file == null) {
           number_plan_checker(info.number);
-          console.log()
           datalist.push({
-            number: info.number,
-            id: carrier,
+            Number: info.number,
+            carrier: carrier,
+            Action: "Not ported",
+            id:"",
           });
           resolve();
         } else {
-          console.log(file.RNORoute)
-          routing_label_checker(file.RNORoute)
-          datalist.push({
-            number: info.number,
-            id: file.id,
-          });
+          object= file.toObject();
+          // console.log(object.Action)
+          routing_label_checker(object.RNORoute).then(
+            datalist.push({
+              Number: object.number,
+              id: object.id,
+              Action: object.Action,
+              carrier: carrier,
+            })
+          );
           resolve();
         }
       }
@@ -107,16 +110,15 @@ async function post_handler(list) {
 }
 
 app.get("/", (req, res) => {
-  datalist = [{ number: "Checked number", id: "Provider ID" }];
+  datalist = [{ Number: "Number", id: "ID",Action: "Action", carrier:"Carrier" }];
   res.render("list", {
-    array: [{ number: "Checked number", id: "Provider ID" }],date:year
+    array: [{ Number: "Number", id: "ID",Action: "Action", carrier:"Carrier" }],date:year
   });
 });
 
 app.get("/query", (req, res) => {
-  // console.log(datalist);
   res.render("list", { array: datalist,date:year });
-  datalist = [{ number: "Checked number", id: "Provider ID" }];
+  datalist = [{ Number: "Number", id: "ID",Action: "Action", carrier:"Carrier" }];
 });
 
 function replaceAll(str, find, replace) {
@@ -125,6 +127,7 @@ function replaceAll(str, find, replace) {
 
 function format_input(input){
   a = replaceAll(input," ", "")
+  a = a.replace(/(\r\n|\n|\r)/gm, ",");
   list = a.split(",")
   let numbers = []
   list.forEach(number=>{
@@ -132,11 +135,12 @@ function format_input(input){
     if (c[0] == 0){
       c = "27"+c.substring(1)
     }
+    if (c.length != 0){
     if (c.length > 11 || c.length <11){
       numbers.push("Invalid" )
-    } else {
+    }  else {
       numbers.push(c)
-    }
+    }}
   })
   // console.log(numbers)
   return numbers
