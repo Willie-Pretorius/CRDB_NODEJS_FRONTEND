@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const app = express();
 const csv = require("csvtojson");
-const NumberingPlan = []
+
 
 today = new Date()
 year= today.getFullYear()
@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
 let datalist = [{ number: "Checked number", id: "Provider ID" }];
+let NumberingPlan = []
 
 mongoose.connect("mongodb://127.0.0.1:27017/numbers_db");
 const numberSchema = new mongoose.Schema({
@@ -23,9 +24,17 @@ const numberSchema = new mongoose.Schema({
 const Numbers = mongoose.model("numbers_col", numberSchema, "numbers_col");
 
 (async ()=>{
-  const string = await csv().fromFile("data/NumberingPlan.csv")
-  console.log(string)
+  NumberingPlan = await csv().fromFile("data/NumberingPlan.csv")
 })()
+console.log(NumberingPlan)
+// function number_plan_checker(number){
+
+//   if (number =< startValue) and (number >= endValue){
+//     result = carrier
+//   }
+
+//   return result
+// }
 
 function retrieve_data(info) {
   return new Promise((resolve) => {
@@ -89,16 +98,6 @@ function format_input(input){
   // console.log(numbers)
   return numbers
 }
-
-// function number_plan_checker(number){
-
-//   if (number =< startValue) and (number >= endValue){
-//     result = carrier
-//   }
-
-//   return result
-// }
-
 
 
 
