@@ -23,18 +23,34 @@ const numberSchema = new mongoose.Schema({
 });
 const Numbers = mongoose.model("numbers_col", numberSchema, "numbers_col");
 
-(async ()=>{
+async function load_numbering_plan () {
   NumberingPlan = await csv().fromFile("data/NumberingPlan.csv")
-})()
-console.log(NumberingPlan)
-// function number_plan_checker(number){
+  
+}
+// load_numbering_plan().then(()=>console.log(NumberingPlan))
+const loadcsv = load_numbering_plan()
 
-//   if (number =< startValue) and (number >= endValue){
-//     result = carrier
-//   }
-
-//   return result
-// }
+async function number_plan_checker(str){
+  formatted = replaceAll(str,"27","0")
+  return new Promise((resolve)=>{
+    number= Number(formatted)
+    console.log(typeof(number))
+    console.log(number)
+    NumberingPlan.forEach((prefix)=>{
+      console.log(prefix)
+      ifrom = prefix['Number from'];
+      ito = prefix['Number  to'];
+      console.log(ifrom)
+      console.log(ito)
+      if (number >= ifrom && number <= ito ){
+        result = prefix['PARTICIPANT_ID']
+        console.log(result)
+        resolve();
+      }
+    })
+    
+  })
+}
 
 function retrieve_data(info) {
   return new Promise((resolve) => {
@@ -42,8 +58,8 @@ function retrieve_data(info) {
       if (err) {
         // console.log("err");
       } else {
-        // console.log(file.id);
         if (file == null) {
+          let carrier =  number_plan_checker(info.number);
           datalist.push({
             number: info.number,
             id: "Not Found",
