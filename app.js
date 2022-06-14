@@ -104,7 +104,7 @@ async function post_handler(list) {
   for (item of list) {
     if (item != "Invalid"){
       await retrieve_data({ number: item });
-    } else datalist.push({number:"invalid",id: "invalid"})
+    } else datalist.push({Number:"invalid",id: "invalid"})
     
   }
 }
