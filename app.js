@@ -135,7 +135,7 @@ function format_input(input){
     if (c[0] == 0){
       c = "27"+c.substring(1)
     }
-    if (c.length != 0){
+    if (c.length != 0 && numbers.includes(c) != true){
     if (c.length > 11 || c.length <11){
       numbers.push("Invalid" )
     }  else {
