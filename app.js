@@ -36,7 +36,7 @@ const numberSchema = new mongoose.Schema({
 const Numbers = mongoose.model("numbers_col", numberSchema, "numbers_col");
 
 async function number_plan_checker(str){
-  formatted = replaceAll(str,"27","0")
+  formatted = '0'+ str.slice(2)
   return new Promise((resolve)=>{
     number= Number(formatted)
     NumberingPlan.forEach((prefix)=>{
@@ -152,7 +152,7 @@ app.post("/query", async (req, res) => {
   input = req.body.number;
   numbers = format_input(input)
   if (numbers.length > 100) {
-    datalist = [{ number: "The maximum lookups are 100 at a time.", id: "" }];
+    datalist = [{ Number: "The maximum lookups are 100 at a time.", id: "" }];
     res.redirect("/query");
   } else {
     const result = await post_handler(numbers);
